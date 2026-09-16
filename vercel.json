@@ -15,25 +15,16 @@
     },
     "rewrites": [
         {
-            "source": "/api(/.*)?",
-            "destination": {
-                "type": "service",
-                "service": "backend"
-            }
+            "source": "/api/:path*",
+            "destination": { "service": "backend" }
         },
         {
-            "source": "/admin(/.*)?",
-            "destination": {
-                "type": "service",
-                "service": "admin"
-            }
+            "source": "/admin/:path*",
+            "destination": { "service": "admin", "path": "/:path*" }
         },
         {
             "source": "/(.*)",
-            "destination": {
-                "type": "service",
-                "service": "frontend"
-            }
+            "destination": { "service": "frontend" }
         }
     ]
 }
