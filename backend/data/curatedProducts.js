@@ -1,0 +1,53 @@
+const curatedProducts = [
+  {
+    name: "Noir Heavyweight Tee",
+    description: "An oversized everyday tee cut from dense, garment-washed cotton for a soft hand and structured drape.",
+    price: 2499, discount: 12, image: ["/products/noir-oversized-tee.png"],
+    category: "Men", subCategory: "T-Shirts", fabric: "Cotton", occasion: "Casual",
+    fit: "Oversized", color: "Charcoal", sizes: ["S", "M", "L", "XL"],
+    bestseller: true, rating: 4.9, sold: 184, date: 1767139200000,
+  },
+  {
+    name: "Satin Muse Midi Dress",
+    description: "A fluid bias-cut midi in luminous satin, shaped with a soft cowl neckline and an effortless evening drape.",
+    price: 5499, discount: 15, image: ["/products/satin-muse-dress.png"],
+    category: "Women", subCategory: "Dresses", fabric: "Satin", occasion: "Cocktail",
+    fit: "Regular", color: "Cream", sizes: ["XS", "S", "M", "L"],
+    bestseller: true, rating: 4.8, sold: 151, date: 1767225600000,
+  },
+  {
+    name: "Indigo Utility Overshirt",
+    description: "A relaxed dark-indigo layer with considered utility pockets, clean finishing, and a substantial denim feel.",
+    price: 4299, discount: 10, image: ["/products/indigo-overshirt.png"],
+    category: "Men", subCategory: "Shirts", fabric: "Denim", occasion: "Casual",
+    fit: "Relaxed", color: "Navy Blue", sizes: ["S", "M", "L", "XL"],
+    bestseller: false, rating: 4.7, sold: 96, date: 1767312000000,
+  },
+  {
+    name: "Cocoa Rib Co-ord",
+    description: "A softly structured rib-knit set pairing a close-fit long sleeve with relaxed, wide-leg trousers.",
+    price: 5999, discount: 18, image: ["/products/cocoa-rib-coord.png"],
+    category: "Women", subCategory: "Co-ords", fabric: "Viscose", occasion: "Casual",
+    fit: "Relaxed", color: "Brown", sizes: ["XS", "S", "M", "L", "XL"],
+    bestseller: true, rating: 4.9, sold: 203, date: 1767398400000,
+  },
+  {
+    name: "Noir Wide-Leg Trousers",
+    description: "Tailored wide-leg trousers with a clean front, fluid fall, and modern proportion built for day-to-night dressing.",
+    price: 3899, discount: 8, image: ["/products/noir-tailored-set.png"],
+    category: "Men", subCategory: "Trousers", fabric: "Cotton Blend", occasion: "Formal",
+    fit: "Tailored", color: "Black", sizes: ["28", "30", "32", "34", "36"],
+    bestseller: false, rating: 4.7, sold: 81, date: 1767484800000,
+  },
+  {
+    name: "Sage Utility Jacket",
+    description: "A cropped utility layer in muted sage, finished with crisp pockets and a clean, minimal silhouette.",
+    price: 4799, discount: 14, image: ["/products/sage-utility-jacket.png"],
+    category: "Women", subCategory: "Jackets", fabric: "Canvas", occasion: "Casual",
+    fit: "Regular", color: "Olive", sizes: ["XS", "S", "M", "L"],
+    bestseller: true, rating: 4.8, sold: 132, date: 1767571200000,
+  },
+];
+
+export default curatedProducts;
+

@@ -1,0 +1,25 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:wght@500;600&display=swap');
+@import "tailwindcss";
+a.active hr{
+    display: block;
+
+}
+*{ font-family: "Outfit", sans-serif; }
+html{ scroll-behavior: smooth; background: #f7f5f0; }
+body{ margin: 0; min-width: 320px; background: #f7f5f0; color: #11110f; }
+button, a{ -webkit-tap-highlight-color: transparent; }
+:focus-visible{ outline: 2px solid #11110f; outline-offset: 3px; }
+.prata-regular {
+  font-family: "Prata", serif;
+  font-weight: 400;
+  font-style: normal;
+}
+::-webkit-scrollbar{
+    display: none;
+}
+@media (max-width:640px) {
+    a.active{
+        background-color: black;
+        color: white;
+    }
+}

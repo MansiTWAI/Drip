@@ -1,0 +1,12 @@
+{
+  "name": "drip-commerce",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "dev:store": "pnpm --dir frontend dev",
+    "dev:admin": "pnpm --dir admin dev",
+    "dev:api": "pnpm --dir backend start",
+    "build": "pnpm --dir frontend build && pnpm --dir admin build",
+    "lint": "pnpm --dir frontend lint && pnpm --dir admin lint"
+  }
+}
