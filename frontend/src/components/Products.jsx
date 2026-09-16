@@ -72,7 +72,7 @@ const Products = ({ title = 'Our Best Sellers', count = 4 }) => {
         <div className="mt-10 md:mt-12">
           <button 
             onClick={() => navigate('/collection')}
-            className="flex items-center justify-between rounded-full px-7 py-3.5 bg-[#11110f] text-white text-[11px] font-bold uppercase tracking-[0.2em] min-w-[190px] hover:bg-[#c7ff4a] hover:text-black transition-all duration-300"
+            className="flex items-center justify-between rounded-full px-7 py-3.5 bg-[#6f452c] text-white text-[11px] font-bold uppercase tracking-[0.2em] min-w-[190px] hover:bg-[#4c2f20] transition-all duration-300"
           >
             <span>See More</span>
             <ArrowRight size={16} className="ml-4" />

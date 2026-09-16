@@ -79,9 +79,9 @@ const LatestCollection = ({
             onClick={goToCollection}
             className="
               flex items-center gap-3 px-8 py-3.5 
-              rounded-full bg-[#11110f] text-white
+              rounded-full bg-[#6f452c] text-white
               text-[13px] font-bold uppercase tracking-[0.18em]
-              hover:bg-[#c7ff4a] hover:text-black active:scale-[0.98]
+              hover:bg-[#4c2f20] active:scale-[0.98]
               transition-all duration-300
               min-w-[180px]
             "

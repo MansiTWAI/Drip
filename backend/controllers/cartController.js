@@ -70,6 +70,56 @@ const updateCart = async (req, res) => {
 };
 
 /* =========================
+   CHANGE CART ITEM SIZE
+========================= */
+const changeCartSize = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { itemId, oldSize, newSize, color = "" } = req.body;
+
+    if (!itemId || !oldSize || !newSize) {
+      return res.status(400).json({ success: false, message: "Item and sizes are required" });
+    }
+
+    const user = await userModel.findById(userId);
+    if (!user) return res.status(404).json({ success: false, message: "User not found" });
+
+    const matchingItems = user.cart.filter(
+      (item) =>
+        item.productId.toString() === itemId &&
+        item.color === color &&
+        (item.size === oldSize || item.size === newSize)
+    );
+
+    const sourceItem = matchingItems.find((item) => item.size === oldSize);
+    if (!sourceItem) {
+      return res.status(404).json({ success: false, message: "Cart item not found" });
+    }
+
+    const combinedQuantity = matchingItems.reduce(
+      (total, item) => total + Number(item.quantity || 0),
+      0
+    );
+
+    user.cart = user.cart.filter(
+      (item) =>
+        !(
+          item.productId.toString() === itemId &&
+          item.color === color &&
+          (item.size === oldSize || item.size === newSize)
+        )
+    );
+    user.cart.push({ productId: itemId, size: newSize, color, quantity: combinedQuantity });
+
+    await user.save();
+    res.json({ success: true, message: "Size updated" });
+  } catch (error) {
+    console.error("Change cart size error:", error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+/* =========================
    GET USER CART
 ========================= */
 const getUserCart = async (req, res) => {
@@ -94,4 +144,4 @@ const getUserCart = async (req, res) => {
   }
 };
 
-export { addToCart, updateCart, getUserCart };
+export { addToCart, updateCart, getUserCart, changeCartSize };

@@ -123,7 +123,7 @@ const Hero = () => {
 
                     {/* Elegant Discount Badge */}
                     {pricing.hasDiscount && (
-                      <div className={`absolute top-0 ${isSecond ? 'left-0' : 'right-0'} bg-[#c7ff4a] text-black text-[9px] px-3 py-1 font-bold tracking-tighter uppercase`}>
+                      <div className={`absolute top-0 ${isSecond ? 'left-0' : 'right-0'} bg-[#a56a43] text-white text-[9px] px-3 py-1 font-bold tracking-tighter uppercase`}>
                         {pricing.discount}% OFF
                       </div>
                     )}

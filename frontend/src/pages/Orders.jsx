@@ -231,7 +231,7 @@ const Orders = () => {
                   }`}
                 >
                   <div className={`absolute top-0 right-0 px-4 py-1 text-[10px] font-bold uppercase tracking-tighter rounded-bl-xl z-10 ${
-                    isDelivered ? 'bg-emerald-50 text-emerald-600' :
+                    isDelivered ? 'bg-[#8B4513]/10 text-[#6f452c]' :
                     isCancelled ? 'bg-rose-50 text-rose-500' :
                     'bg-[#8B4513]/10 text-[#8B4513]'
                   }`}>

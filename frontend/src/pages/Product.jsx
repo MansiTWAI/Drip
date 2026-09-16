@@ -122,7 +122,7 @@ const Product = () => {
             {hasDiscount && (
               <>
                 <p className="text-2xl text-gray-500 line-through">{mrp}</p>
-                <span className="text-lg font-medium text-green-600 bg-green-100 px-3 py-1 rounded">
+                <span className="text-lg font-medium text-[#6f452c] bg-[#8b5e3c]/10 px-3 py-1 rounded">
                   {discountText}
                 </span>
               </>
@@ -158,7 +158,7 @@ const Product = () => {
                 disabled={!size}
                 className={`group relative overflow-hidden w-full sm:w-[280px] h-[56px] flex items-center justify-center rounded-xl text-[10px] font-black uppercase tracking-[0.2em] transition-all duration-500 ${
                   size 
-                      ? 'bg-[#11110f] text-white hover:bg-[#c7ff4a] hover:text-black shadow-lg shadow-black/10 active:scale-95'
+                      ? 'bg-[#6f452c] text-white hover:bg-[#4c2f20] shadow-lg shadow-[#6f452c]/15 active:scale-95'
                     : 'bg-stone-100 text-stone-400 cursor-not-allowed'
                 }`}
               >

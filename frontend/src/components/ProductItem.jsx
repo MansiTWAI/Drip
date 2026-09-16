@@ -56,7 +56,7 @@ const ProductItem = ({ id, image, name }) => {
 
           {/* RATING UI - KEPT EXACTLY PER YOUR ORIGINAL SYNTAX */}
           <div className="absolute top-3 right-3 bg-black/85 backdrop-blur-sm text-white flex items-center gap-1 px-2 py-1 rounded-full text-[10px] font-bold">
-            <Star size={10} className="fill-[#c7ff4a] text-[#c7ff4a]" />
+            <Star size={10} className="fill-[#d6a77a] text-[#d6a77a]" />
             <span>{rating.toFixed(1)}</span>
           </div>
         </div>

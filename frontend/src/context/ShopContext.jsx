@@ -285,6 +285,35 @@ const ShopContextProvider = (props) => {
     }
   };
 
+  const changeCartSize = async (itemId, oldSize, newSize) => {
+    if (!newSize || oldSize === newSize) return;
+
+    setCartItems((prevCart) => {
+      const cartData = structuredClone(prevCart);
+      const quantity = cartData[itemId]?.[oldSize] || 0;
+      if (!quantity) return prevCart;
+
+      if (!cartData[itemId]) cartData[itemId] = {};
+      cartData[itemId][newSize] = (cartData[itemId][newSize] || 0) + quantity;
+      delete cartData[itemId][oldSize];
+      localStorage.setItem("cartItems", JSON.stringify(cartData));
+      return cartData;
+    });
+
+    if (token) {
+      try {
+        await axios.post(
+          backendUrl + "/api/cart/change-size",
+          { itemId, oldSize, newSize },
+          { headers: getAuthHeaders() }
+        );
+      } catch (error) {
+        toast.error(error?.response?.data?.message || "Unable to change size");
+        await loadUserCart();
+      }
+    }
+  };
+
   // ---------------- DISCOUNTS ----------------
   const getFinalPrice = (product) => {
     if (!product) return 0;
@@ -413,6 +442,7 @@ const ShopContextProvider = (props) => {
     setCartItems,
     getCartCount,
     updateQuantity,
+    changeCartSize,
     getCartAmount,
 
     wishlist,

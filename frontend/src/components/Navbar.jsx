@@ -159,7 +159,7 @@ const Navbar = () => {
               }
             />
             {wishlistCount > 0 && (
-              <span className="absolute top-1 right-1 w-2 h-2 bg-[#c7ff4a] rounded-full ring-2 ring-black"></span>
+              <span className="absolute top-1 right-1 w-2 h-2 bg-[#a56a43] rounded-full ring-2 ring-black"></span>
             )}
           </Link>
 

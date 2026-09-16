@@ -161,7 +161,7 @@ const TrackOrder = ({ order, onBack, currency }) => {
                               {step}
                             </p>
                             {isActive && (
-                              <span className={`px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-tighter ${isCancelled ? 'bg-rose-50 text-rose-500' : 'bg-emerald-50 text-emerald-600'}`}>
+                              <span className={`px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-tighter ${isCancelled ? 'bg-rose-50 text-rose-500' : 'bg-[#8B4513]/10 text-[#6f452c]'}`}>
                                 {isCancelled ? 'Final Status' : 'Current Stage'}
                               </span>
                             )}
