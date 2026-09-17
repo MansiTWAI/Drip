@@ -1,13 +1,31 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "framework": null,
-  "buildCommand": "npm run build:vercel",
-  "outputDirectory": "dist",
+  "services": {
+    "frontend": {
+      "root": "frontend",
+      "framework": "vite"
+    },
+    "admin": {
+      "root": "admin",
+      "framework": "vite"
+    },
+    "backend": {
+      "root": "backend",
+      "framework": "express",
+      "entrypoint": "server.js"
+    }
+  },
   "rewrites": [
-    { "source": "/api/:path*", "destination": "/api" },
-    { "source": "/admin", "destination": "/admin/index.html" },
-    { "source": "/admin/:path*", "destination": "/admin/index.html" },
-    { "source": "/:path*", "destination": "/index.html" }
+    { "source": "/api(/.*)?", "destination": { "type": "service", "service": "backend" } },
+    { "source": "/admin/assets/(.*)", "destination": { "type": "service", "service": "admin" } },
+    { "source": "/admin/products/(.*)", "destination": { "type": "service", "service": "admin" } },
+    { "source": "/admin/drip-logo.png", "destination": { "type": "service", "service": "admin" } },
+    { "source": "/admin", "destination": { "type": "service", "service": "admin", "path": "/index.html" } },
+    { "source": "/admin/(.*)", "destination": { "type": "service", "service": "admin", "path": "/index.html" } },
+    { "source": "/assets/(.*)", "destination": { "type": "service", "service": "frontend" } },
+    { "source": "/products/(.*)", "destination": { "type": "service", "service": "frontend" } },
+    { "source": "/drip-logo.png", "destination": { "type": "service", "service": "frontend" } },
+    { "source": "/(.*)", "destination": { "type": "service", "service": "frontend", "path": "/index.html" } }
   ],
   "headers": [
     {
