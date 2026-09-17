@@ -1,8 +1,8 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import category1 from '../assets/fit1.png';
-import category2 from '../assets/fit2.png';
-import category3 from '../assets/fit3.png';
+import category1 from '../assets/fit1.webp';
+import category2 from '../assets/fit2.webp';
+import category3 from '../assets/fit3.webp';
 
 const Categories = () => {
   const navigate = useNavigate();

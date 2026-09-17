@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom'; // Added missing import
-import logo from '../assets/drip-logo.png'
+import logo from '../assets/drip-logo.webp'
 
 
 const Navbar = ({ setToken }) => {

@@ -272,7 +272,12 @@ const ShopContextProvider = (props) => {
     try {
       const response = await axios.get(backendUrl + "/api/product/list");
       if (response.data.success) {
-        const apiProducts = response.data.products || [];
+        const apiProducts = (response.data.products || []).map((product) => ({
+          ...product,
+          image: (product.image || []).map((url) =>
+            url.startsWith("/products/") ? url.replace(/\.png$/i, ".webp") : url
+          ),
+        }));
         setProducts(apiProducts.length ? apiProducts : curatedProducts);
       } else {
         setProducts(curatedProducts);

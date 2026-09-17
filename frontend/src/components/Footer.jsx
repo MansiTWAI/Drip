@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Instagram } from 'lucide-react';
-import logo from '../assets/drip-logo.png';
+import logo from '../assets/drip-logo.webp';
 import { brand } from '../config/brand';
 
 const Footer = () => {

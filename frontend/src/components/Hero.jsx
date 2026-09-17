@@ -1,7 +1,7 @@
 import React, { useContext, useMemo } from 'react';
 import { ChevronDown } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import hero from '../assets/hero.png';
+import hero from '../assets/hero.webp';
 import { ShopContext } from '../context/ShopContext';
 
 const Hero = () => {

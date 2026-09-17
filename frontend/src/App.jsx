@@ -1,5 +1,5 @@
 import React, { Suspense, lazy } from "react";
-import { Routes, Route, useLocation } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -26,8 +26,6 @@ const Terms = lazy(() => import("./pages/Terms"));
 const Shipping = lazy(() => import("./pages/Shipping"));
 
 const App = () => {
-  const location = useLocation();
-
   return (
     <div className="min-h-screen flex flex-col bg-white text-stone-900 selection:bg-stone-200">
       <ToastContainer position="bottom-right" autoClose={3000} />
@@ -42,7 +40,7 @@ const App = () => {
             </div>
           }
         >
-          <Routes location={location} key={location.pathname}>
+          <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/collection/:category?" element={<Collection />} />
             <Route path="/about" element={<About />} />

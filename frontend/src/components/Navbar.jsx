@@ -11,7 +11,7 @@ import {
   Heart,
 } from "lucide-react";
 import SearchBar from "./SearchBar";
-import logo from "../assets/drip-logo.png";
+import logo from "../assets/drip-logo.webp";
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);

@@ -29,10 +29,14 @@ app.get('/api/health', (req, res) => {
     res.json({ success: true, service: "drip-api", database: "connected" })
 })
 
+export const initializeServices = async () => {
+    await connectDB()
+    await connectCloudinary()
+}
+
 const startServer = async () => {
     try {
-        await connectDB()
-        await connectCloudinary()
+        await initializeServices()
         app.listen(port, () => console.log("Drip API started on PORT :" + port))
     } catch (error) {
         console.error("Unable to start Drip API:", error.message)
@@ -40,4 +44,8 @@ const startServer = async () => {
     }
 }
 
-startServer()
+if (!process.env.VERCEL) {
+    startServer()
+}
+
+export default app

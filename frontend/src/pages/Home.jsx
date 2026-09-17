@@ -6,7 +6,7 @@ import ProductGrid from "../components/Products";
 import ServiceFeatures from "../components/Services";
 import Hero from "../components/Hero";
 import LatestCollection from "../components/LatestCollection";
-import editorialImage from "../assets/bottom_img.png";
+import editorialImage from "../assets/bottom_img.webp";
 
 const testimonials = [
   ["The fit feels considered, not generic. My new everyday uniform.", "Aanya S.", "Verified buyer"],
