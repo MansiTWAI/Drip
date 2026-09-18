@@ -9,6 +9,7 @@ import {
   Menu,
   ChevronLeft,
   Heart,
+  ShieldCheck,
 } from "lucide-react";
 import SearchBar from "./SearchBar";
 import logo from "../assets/drip-logo.webp";
@@ -60,6 +61,7 @@ const Navbar = () => {
   const cartCount = getCartCount();
   const showCartBadge = cartCount > 0;
   const wishlistCount = wishlist?.length || 0;
+  const adminUrl = import.meta.env.DEV ? "http://localhost:5173/admin" : "/admin";
 
   const promotionText =
     maxDiscount?.isActive && Number(maxDiscount.value) > 0
@@ -133,6 +135,15 @@ const Navbar = () => {
 
         {/* Right Icons */}
         <div className="flex items-center gap-5 md:gap-7 text-black">
+          <a
+            href={adminUrl}
+            className="hidden items-center gap-2 rounded-full border border-[#8b5e3c]/20 px-3 py-2 text-[10px] font-bold uppercase tracking-[0.14em] text-[#6f452c] transition hover:border-[#8b5e3c]/40 hover:bg-[#8b5e3c]/10 md:flex"
+            aria-label="Open Drip admin panel"
+          >
+            <ShieldCheck size={16} />
+            Admin
+          </a>
+
           {/* SEARCH ICON */}
           <button
             type="button"
@@ -265,6 +276,14 @@ const Navbar = () => {
                 </span>
               )}
             </NavLink>
+            <a
+              href={adminUrl}
+              onClick={() => setVisible(false)}
+              className="flex items-center justify-between border-b border-stone-50 px-8 py-4 text-sm uppercase tracking-wider hover:bg-stone-50"
+            >
+              Admin portal
+              <ShieldCheck size={17} />
+            </a>
           </div>
         </div>
       </aside>
