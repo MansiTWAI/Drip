@@ -1,6 +1,7 @@
 {
   "name": "drip-commerce",
   "private": true,
+  "type": "module",
   "version": "1.0.0",
   "scripts": {
     "dev:store": "pnpm --dir frontend dev",
