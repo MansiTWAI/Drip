@@ -26,7 +26,24 @@ app.get('/', (req,res)=>{
     res.send("Drip API working")
 })
 app.get('/api/health', (req, res) => {
-    res.json({ success: true, service: "drip-api", database: "connected" })
+    const database = connectDB.isConnected() ? "connected" : "disconnected"
+    res.status(database === "connected" ? 200 : 503).json({
+        success: database === "connected",
+        service: "drip-api",
+        database
+    })
+})
+
+app.use((req, res) => {
+    res.status(404).json({ success: false, message: "API route not found" })
+})
+
+app.use((error, req, res, next) => {
+    console.error("Unhandled API error:", error)
+    res.status(error.status || 500).json({
+        success: false,
+        message: error.status ? error.message : "Internal server error"
+    })
 })
 
 export const initializeServices = async () => {

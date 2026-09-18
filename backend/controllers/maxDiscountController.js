@@ -15,14 +15,19 @@ export const updateMaxDiscount = async (req, res) => {
   const { value, description, isActive } = req.body;
 
   try {
+    const numericValue = Number(value);
+    if (!Number.isFinite(numericValue) || numericValue < 0 || numericValue > 100) {
+      return res.status(400).json({ success: false, message: "Discount must be between 0 and 100" });
+    }
+
     let discount = await MaxDiscount.findOne();
     if (discount) {
-      discount.value = value;
-      discount.description = description;
-      discount.isActive = isActive;
+      discount.value = numericValue;
+      discount.description = String(description || "").trim();
+      discount.isActive = Boolean(isActive);
       await discount.save();
     } else {
-      discount = new MaxDiscount({ value, description, isActive });
+      discount = new MaxDiscount({ value: numericValue, description: String(description || "").trim(), isActive: Boolean(isActive) });
       await discount.save();
     }
     res.json(discount);

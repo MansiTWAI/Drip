@@ -1,4 +1,5 @@
 import userModel from "../models/userModel.js";
+import mongoose from "mongoose";
 
 /* =========================
    ADD TO CART
@@ -7,6 +8,10 @@ const addToCart = async (req, res) => {
   try {
     const userId = req.user.id; // from auth middleware
     const { itemId, size, color } = req.body; // add color if needed
+
+    if (!mongoose.isValidObjectId(itemId) || !String(size || "").trim()) {
+      return res.status(400).json({ success: false, message: "A valid item and size are required" });
+    }
 
     const user = await userModel.findById(userId);
     if (!user) return res.status(404).json({ success: false, message: "User not found" });
@@ -42,6 +47,13 @@ const updateCart = async (req, res) => {
     const userId = req.user.id;
     const { itemId, size, color, quantity } = req.body;
 
+    if (!mongoose.isValidObjectId(itemId) || !String(size || "").trim()) {
+      return res.status(400).json({ success: false, message: "A valid item and size are required" });
+    }
+    if (!Number.isInteger(Number(quantity)) || Number(quantity) < 0) {
+      return res.status(400).json({ success: false, message: "Quantity must be a non-negative integer" });
+    }
+
     const user = await userModel.findById(userId);
     if (!user) return res.status(404).json({ success: false, message: "User not found" });
 
@@ -56,7 +68,7 @@ const updateCart = async (req, res) => {
       if (quantity <= 0) {
         user.cart.splice(itemIndex, 1); // remove item if quantity 0
       } else {
-        user.cart[itemIndex].quantity = quantity;
+        user.cart[itemIndex].quantity = Number(quantity);
       }
       await user.save();
       return res.json({ success: true, message: "Cart updated" });
@@ -77,7 +89,7 @@ const changeCartSize = async (req, res) => {
     const userId = req.user.id;
     const { itemId, oldSize, newSize, color = "" } = req.body;
 
-    if (!itemId || !oldSize || !newSize) {
+    if (!mongoose.isValidObjectId(itemId) || !oldSize || !newSize) {
       return res.status(400).json({ success: false, message: "Item and sizes are required" });
     }
 
@@ -131,11 +143,21 @@ const getUserCart = async (req, res) => {
 
     // Convert array to frontend object format { productId: { size: quantity } }
     const cartData = {};
+    let removedUnavailableItems = false;
     user.cart.forEach((item) => {
+      if (!item.productId) {
+        removedUnavailableItems = true;
+        return;
+      }
       const pid = item.productId._id.toString();
       if (!cartData[pid]) cartData[pid] = {};
       cartData[pid][item.size] = item.quantity;
     });
+
+    if (removedUnavailableItems) {
+      user.cart = user.cart.filter((item) => item.productId);
+      await user.save();
+    }
 
     res.json({ success: true, cartData });
   } catch (error) {

@@ -1,5 +1,6 @@
 import { v2 as cloudinary } from "cloudinary";
 import productModel from "../models/productModel.js";
+import mongoose from "mongoose";
 
 // Function to add product
 const addProduct = async (req, res) => {
@@ -18,12 +19,23 @@ const addProduct = async (req, res) => {
       color 
     } = req.body;
 
-    const image1 = req.files.image1 && req.files.image1[0];
-    const image2 = req.files.image2 && req.files.image2[0];
-    const image3 = req.files.image3 && req.files.image3[0];
-    const image4 = req.files.image4 && req.files.image4[0];
+    const files = req.files || {};
+    const image1 = files.image1 && files.image1[0];
+    const image2 = files.image2 && files.image2[0];
+    const image3 = files.image3 && files.image3[0];
+    const image4 = files.image4 && files.image4[0];
     
     const images = [image1, image2, image3, image4].filter((item) => item !== undefined);
+
+    if (!name?.trim() || !description?.trim() || !category || !subCategory) {
+      return res.status(400).json({ success: false, message: "Complete product details are required" });
+    }
+    if (!Number.isFinite(Number(price)) || Number(price) <= 0) {
+      return res.status(400).json({ success: false, message: "Price must be greater than zero" });
+    }
+    if (images.length === 0) {
+      return res.status(400).json({ success: false, message: "At least one product image is required" });
+    }
 
     let imagesUrl = await Promise.all(
       images.map(async (item) => {
@@ -58,7 +70,7 @@ const addProduct = async (req, res) => {
     res.json({ success: true, message: "Product added" });
   } catch (error) {
     console.log(error);
-    res.json({ success: false, message: error.message });
+    res.status(400).json({ success: false, message: error.message });
   }
 };
 
@@ -76,7 +88,11 @@ const listProducts = async (req, res) => {
 // Remove product
 const removeProduct = async (req, res) => {
   try {
-    await productModel.findByIdAndDelete(req.body.id);
+    if (!mongoose.isValidObjectId(req.body.id)) {
+      return res.status(400).json({ success: false, message: "A valid product id is required" });
+    }
+    const removed = await productModel.findByIdAndDelete(req.body.id);
+    if (!removed) return res.status(404).json({ success: false, message: "Product not found" });
     res.json({ success: true, message: "Product Removed" });
   } catch (error) {
     console.log(error);
@@ -88,7 +104,11 @@ const removeProduct = async (req, res) => {
 const singleProduct = async (req, res) => {
   try {
     const { productId } = req.body;
+    if (!mongoose.isValidObjectId(productId)) {
+      return res.status(400).json({ success: false, message: "A valid product id is required" });
+    }
     const product = await productModel.findById(productId);
+    if (!product) return res.status(404).json({ success: false, message: "Product not found" });
     res.json({ success: true, product });
   } catch (error) {
     console.log(error);

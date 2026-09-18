@@ -11,4 +11,5 @@ const connectDB=async()=>{
         dbName: process.env.MONGODB_DB || "drip_store"
     });
 }
+connectDB.isConnected = () => mongoose.connection.readyState === 1;
 export default connectDB;

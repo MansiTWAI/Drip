@@ -9,13 +9,39 @@ import { useState } from 'react';
 import Login from './components/Login';
 import { ToastContainer } from 'react-toastify';
 import { useEffect } from 'react';
+import axios from 'axios';
 export const backendUrl = import.meta.env.VITE_BACKEND_URL || (import.meta.env.PROD ? "" : "http://localhost:4000")
 export const currency='₹'
 const App = () => {
   const [token, setToken] = useState(localStorage.getItem('token')?localStorage.getItem('token'):'');
+  const [isCheckingSession, setIsCheckingSession] = useState(Boolean(token));
+
   useEffect(()=>{
     localStorage.setItem('token', token)
   },[token])
+
+  useEffect(() => {
+    if (!token) {
+      setIsCheckingSession(false);
+      return;
+    }
+
+    let active = true;
+    axios.get(`${backendUrl}/api/user/admin/verify`, { headers: { token } })
+      .then(() => active && setIsCheckingSession(false))
+      .catch(() => {
+        if (!active) return;
+        localStorage.removeItem('token');
+        setToken('');
+        setIsCheckingSession(false);
+      });
+
+    return () => { active = false; };
+  }, [token]);
+
+  if (isCheckingSession) {
+    return <div className='min-h-screen grid place-items-center bg-[#FCFBF9] text-stone-500'>Checking admin session…</div>;
+  }
   return (
     <div className='bg-gryay-50 min-h-screen'>
       <ToastContainer />

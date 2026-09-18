@@ -58,7 +58,7 @@ const placeOrder = async (req, res) => {
     const enrichedItems = [];
 
     for (const cartItem of items) {
-      if (!cartItem.productId || !cartItem.quantity || !cartItem.size) {
+      if (!cartItem.productId || !Number.isInteger(Number(cartItem.quantity)) || Number(cartItem.quantity) <= 0 || !cartItem.size) {
         return res.status(400).json({
           success: false,
           message: "Each item must have productId, quantity and size"
@@ -128,7 +128,7 @@ const placeOrder = async (req, res) => {
     }
 
     // Clear cart
-    await userModel.findByIdAndUpdate(userId, { cartData: {} });
+    await userModel.findByIdAndUpdate(userId, { $set: { cart: [] } });
 
     return res.json({
       success: true,
