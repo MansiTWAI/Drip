@@ -8,7 +8,9 @@ const connectDB=async()=>{
     }
 
     await mongoose.connect(process.env.MONGODB_URI, {
-        dbName: process.env.MONGODB_DB || "drip_store"
+        dbName: process.env.MONGODB_DB || "drip_store",
+        serverSelectionTimeoutMS: 8000,
+        connectTimeoutMS: 8000
     });
 }
 connectDB.isConnected = () => mongoose.connection.readyState === 1;

@@ -61,9 +61,7 @@ const startServer = async () => {
     }
 }
 
-if (process.env.VERCEL) {
-    await initializeServices()
-} else {
+if (!process.env.VERCEL) {
     startServer()
 }
 
