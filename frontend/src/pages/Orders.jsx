@@ -5,6 +5,7 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 import TrackOrder from '../components/TrackOrder';
 import { assets } from '../assets/assets';
+import { Star, X } from 'lucide-react';
 
 const Orders = () => {
   const { backendUrl, token, currency, navigate, handleCancelOrder } = useContext(ShopContext);
@@ -16,6 +17,11 @@ const Orders = () => {
   // Modal States
   const [showCancelCard, setShowCancelCard] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState(null);
+  const [reviewItem, setReviewItem] = useState(null);
+  const [reviewRating, setReviewRating] = useState(5);
+  const [reviewDescription, setReviewDescription] = useState('');
+  const [reviewByProduct, setReviewByProduct] = useState({});
+  const [savingReview, setSavingReview] = useState(false);
 
   const loadOrderData = async (silent = false) => {
     if (!token) {
@@ -48,6 +54,16 @@ const Orders = () => {
         });
         allItems.sort((a, b) => b.date - a.date);
         setOrderData(allItems);
+        try {
+          const reviewResponse = await axios.get(`${backendUrl}/api/review/mine`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          if (reviewResponse.data.success) {
+            setReviewByProduct(Object.fromEntries(reviewResponse.data.reviews.map((review) => [String(review.productId), review])));
+          }
+        } catch (reviewError) {
+          console.warn('Could not load saved reviews.', reviewError?.message);
+        }
       } else {
         toast.error(response.data.message || "No orders found");
       }
@@ -98,6 +114,39 @@ const Orders = () => {
     setShowCancelCard(false);
   };
 
+  const openReviewModal = (item) => {
+    const existing = reviewByProduct[String(item.productId)];
+    setReviewItem(item);
+    setReviewRating(existing?.rating || 5);
+    setReviewDescription(existing?.description || '');
+  };
+
+  const submitReview = async (event) => {
+    event.preventDefault();
+    if (reviewDescription.trim().length < 10) {
+      toast.error('Please write at least 10 characters about your experience');
+      return;
+    }
+    try {
+      setSavingReview(true);
+      const response = await axios.post(`${backendUrl}/api/review/save`, {
+        productId: reviewItem.productId,
+        orderId: reviewItem.orderId,
+        rating: reviewRating,
+        description: reviewDescription.trim(),
+      }, { headers: { Authorization: `Bearer ${token}` } });
+      if (response.data.success) {
+        setReviewByProduct((current) => ({ ...current, [String(reviewItem.productId)]: response.data.review }));
+        toast.success(response.data.message);
+        setReviewItem(null);
+      }
+    } catch (error) {
+      toast.error(error?.response?.data?.message || 'Unable to publish your review');
+    } finally {
+      setSavingReview(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-[60vh] flex flex-col items-center justify-center">
@@ -122,6 +171,33 @@ const Orders = () => {
 
   return (
     <div className="bg-[#faf7f5] min-h-screen pb-20 relative">
+
+      {reviewItem && (
+        <div className="fixed inset-0 z-[999] flex items-center justify-center bg-black/30 px-4 backdrop-blur-sm" role="dialog" aria-modal="true" aria-labelledby="review-title">
+          <form onSubmit={submitReview} className="relative w-full max-w-lg rounded-[2rem] bg-white p-6 shadow-2xl sm:p-9">
+            <button type="button" onClick={() => setReviewItem(null)} aria-label="Close review form" className="absolute right-5 top-5 rounded-full p-2 text-stone-400 transition hover:bg-stone-100 hover:text-stone-700"><X size={19} /></button>
+            <p className="text-[10px] font-black uppercase tracking-[0.28em] text-[#8B4513]">Verified purchase</p>
+            <h2 id="review-title" className="mt-2 pr-10 font-serif text-3xl text-[#3d2b1f]">Review your {reviewItem.name}</h2>
+            <p className="mt-2 text-sm leading-6 text-stone-500">Tell the Drip community about the fit, fabric, quality, and how the piece felt to wear.</p>
+
+            <fieldset className="mt-7">
+              <legend className="text-xs font-bold uppercase tracking-wider text-stone-600">Your rating</legend>
+              <div className="mt-3 flex gap-2">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <button key={star} type="button" onClick={() => setReviewRating(star)} aria-label={`${star} star rating`} className="rounded-lg p-1 transition hover:scale-110 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#8B4513]">
+                    <Star size={30} className={star <= reviewRating ? 'fill-[#8B4513] text-[#8B4513]' : 'fill-stone-100 text-stone-300'} />
+                  </button>
+                ))}
+              </div>
+            </fieldset>
+
+            <label className="mt-6 block text-xs font-bold uppercase tracking-wider text-stone-600" htmlFor="review-description">Your review</label>
+            <textarea id="review-description" value={reviewDescription} onChange={(event) => setReviewDescription(event.target.value)} maxLength={1000} rows={5} placeholder="The fit was true to size and the fabric…" className="mt-3 w-full resize-none rounded-2xl border border-stone-200 bg-[#faf7f5] p-4 text-sm leading-6 outline-none transition focus:border-[#8B4513] focus:ring-2 focus:ring-[#8B4513]/10" />
+            <div className="mt-2 flex justify-between text-xs text-stone-400"><span>Minimum 10 characters</span><span>{reviewDescription.length}/1000</span></div>
+            <button disabled={savingReview} className="mt-6 w-full rounded-xl bg-[#8B4513] py-4 text-xs font-black uppercase tracking-[0.2em] text-white shadow-lg shadow-[#8B4513]/15 transition hover:bg-[#6F370F] disabled:cursor-wait disabled:opacity-60">{savingReview ? 'Publishing…' : reviewByProduct[String(reviewItem.productId)] ? 'Update review' : 'Publish review'}</button>
+          </form>
+        </div>
+      )}
 
       {/* CANCELLATION CARD UI */}
     {showCancelCard && (
@@ -276,6 +352,11 @@ const Orders = () => {
                         className="w-full bg-rose-50 text-rose-500 py-2.5 rounded-xl text-xs font-bold hover:bg-rose-500 hover:text-white transition-all active:scale-95"
                       >
                         Cancel Item
+                      </button>
+                    )}
+                    {isDelivered && (
+                      <button onClick={() => openReviewModal(item)} className="w-full rounded-xl bg-[#8B4513] py-2.5 text-xs font-bold text-white shadow-sm transition hover:bg-[#6F370F] active:scale-95">
+                        {reviewByProduct[String(item.productId)] ? 'Edit Review' : 'Rate & Review'}
                       </button>
                     )}
                   </div>

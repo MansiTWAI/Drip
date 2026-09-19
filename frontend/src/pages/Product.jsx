@@ -1,20 +1,22 @@
 import React, { useContext, useEffect, useState } from 'react'; 
 import { useParams, useNavigate } from 'react-router-dom';
 import { ShopContext } from '../context/ShopContext';
-import { assets } from '../assets/assets';
 import RelatedProducts from '../components/RelatedProducts';
 import { toast } from 'react-toastify';
-import { Heart } from 'lucide-react'; // <- Added Heart icon
+import axios from 'axios';
+import { BadgeCheck, Heart, MessageSquare, Star } from 'lucide-react';
 
 const Product = () => {
   const { productId } = useParams();
   const navigate = useNavigate();
-  const { products, isProductsLoading, addToCart, getPriceDisplay, isWishlisted, toggleWishlist } = useContext(ShopContext);
+  const { products, isProductsLoading, addToCart, getPriceDisplay, isWishlisted, toggleWishlist, backendUrl } = useContext(ShopContext);
 
   const [productData, setProductData] = useState(null);
   const [image, setImage] = useState('');
   const [size, setSize] = useState('');
   const [isAdded, setIsAdded] = useState(false);
+  const [reviews, setReviews] = useState({ average: 0, count: 0, breakdown: [], reviews: [] });
+  const [reviewsLoading, setReviewsLoading] = useState(true);
 
   const fetchProductData = () => {
     const item = products.find((product) => product._id === productId);
@@ -30,6 +32,27 @@ const Product = () => {
       setIsAdded(false);
     }
   }, [productId, products]);
+
+  useEffect(() => {
+    let active = true;
+    const loadReviews = async () => {
+      setReviewsLoading(true);
+      try {
+        const response = await axios.get(`${backendUrl}/api/review/product/${productId}`);
+        if (active && response.data.success) setReviews(response.data);
+      } catch (error) {
+        console.warn('Reviews are temporarily unavailable.', error?.message);
+      } finally {
+        if (active) setReviewsLoading(false);
+      }
+    };
+    loadReviews();
+    return () => { active = false; };
+  }, [backendUrl, productId]);
+
+  const scrollToReviews = () => {
+    document.getElementById('customer-reviews')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
 
   const handleAddToCart = () => {
     if (!size) {
@@ -109,13 +132,15 @@ const Product = () => {
         <div className="flex-1">
           <h1 className="font-medium text-3xl lg:text-4xl mt-2">{productData.name}</h1>
 
-          <div className="flex items-center gap-1 mt-3">
-            {[...Array(4)].map((_, i) => (
-              <img key={i} src={assets.star_icon} alt="star" className="w-4 h-4" />
-            ))}
-            <img src={assets.star_dull_icon} alt="half star" className="w-4 h-4" />
-            <p className="pl-2 text-sm text-gray-600">(122 reviews)</p>
-          </div>
+          <button onClick={scrollToReviews} className="mt-3 flex items-center gap-2 rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-[#8B4513]">
+            <span className="flex items-center gap-0.5" aria-label={`${reviews.average || 0} out of 5 stars`}>
+              {[1, 2, 3, 4, 5].map((star) => (
+                <Star key={star} size={16} className={star <= Math.round(reviews.average) ? 'fill-[#8B4513] text-[#8B4513]' : 'fill-stone-100 text-stone-300'} />
+              ))}
+            </span>
+            <span className="text-sm font-semibold text-stone-800">{reviews.count ? reviews.average.toFixed(1) : 'New'}</span>
+            <span className="text-sm text-stone-500 underline underline-offset-4">{reviews.count} {reviews.count === 1 ? 'review' : 'reviews'}</span>
+          </button>
 
           <div className="mt-6 flex items-baseline gap-4">
             <p className="text-4xl font-semibold text-black">{sale}</p>
@@ -194,20 +219,52 @@ const Product = () => {
         </div>
       </div>
 
-      <div className="mt-20">
-        <div className="flex border-b">
-          <button className="border px-6 py-3 text-sm font-medium border-b-2 border-black -mb-px">
-            Description
-          </button>
-          <button className="border px-6 py-3 text-sm font-medium hover:bg-gray-50 transition">
-            Reviews (122)
-          </button>
+      <section id="customer-reviews" className="mt-20 scroll-mt-24 rounded-[2rem] border border-[#8B4513]/10 bg-[#faf7f5] p-5 sm:p-8 lg:p-10">
+        <div className="flex flex-col gap-3 border-b border-[#8B4513]/10 pb-7 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <p className="text-[10px] font-black uppercase tracking-[0.28em] text-[#8B4513]">Verified community</p>
+            <h2 className="mt-2 font-serif text-3xl text-[#3d2b1f]">Customer reviews</h2>
+          </div>
+          <p className="max-w-md text-sm leading-relaxed text-stone-500">Only customers with a delivered Drip order can publish a rating and written review.</p>
         </div>
-        <div className="border border-t-0 px-6 py-8 text-sm text-gray-600 space-y-6">
-          <p>Made from soft, breathable fabric, this product ensures all-day comfort...</p>
-          <p>Elevate your style with this thoughtfully designed product...</p>
+
+        <div className="grid gap-8 py-8 lg:grid-cols-[260px_1fr]">
+          <aside className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-[#8B4513]/5">
+            <div className="flex items-end gap-2">
+              <span className="font-serif text-5xl text-[#3d2b1f]">{reviews.count ? reviews.average.toFixed(1) : '—'}</span>
+              <span className="pb-1 text-sm text-stone-400">out of 5</span>
+            </div>
+            <div className="mt-3 flex gap-1">
+              {[1, 2, 3, 4, 5].map((star) => <Star key={star} size={18} className={star <= Math.round(reviews.average) ? 'fill-[#8B4513] text-[#8B4513]' : 'fill-stone-100 text-stone-300'} />)}
+            </div>
+            <p className="mt-2 text-xs text-stone-500">Based on {reviews.count} verified {reviews.count === 1 ? 'purchase' : 'purchases'}</p>
+            <div className="mt-6 space-y-2.5">
+              {[5, 4, 3, 2, 1].map((rating) => {
+                const count = reviews.breakdown.find((row) => row.rating === rating)?.count || 0;
+                const percent = reviews.count ? (count / reviews.count) * 100 : 0;
+                return <div key={rating} className="flex items-center gap-2 text-xs text-stone-500"><span className="w-3">{rating}</span><Star size={12} className="fill-[#8B4513] text-[#8B4513]" /><div className="h-1.5 flex-1 overflow-hidden rounded-full bg-stone-100"><div className="h-full rounded-full bg-[#8B4513]" style={{ width: `${percent}%` }} /></div><span className="w-5 text-right">{count}</span></div>;
+              })}
+            </div>
+          </aside>
+
+          <div className="space-y-4">
+            {reviewsLoading ? (
+              <div className="rounded-2xl bg-white p-8 text-center text-sm text-stone-500">Loading customer reviews…</div>
+            ) : reviews.reviews.length ? reviews.reviews.map((review) => (
+              <article key={review._id} className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-[#8B4513]/5">
+                <div className="flex flex-wrap items-start justify-between gap-3">
+                  <div><p className="font-semibold text-[#3d2b1f]">{review.userName}</p><p className="mt-1 flex items-center gap-1 text-[11px] font-bold uppercase tracking-wider text-[#8B4513]"><BadgeCheck size={14} /> Verified purchase</p></div>
+                  <div className="flex gap-0.5" aria-label={`${review.rating} out of 5 stars`}>{[1,2,3,4,5].map((star) => <Star key={star} size={15} className={star <= review.rating ? 'fill-[#8B4513] text-[#8B4513]' : 'fill-stone-100 text-stone-300'} />)}</div>
+                </div>
+                <p className="mt-4 whitespace-pre-wrap text-sm leading-7 text-stone-600">{review.description}</p>
+                <time className="mt-4 block text-xs text-stone-400">{new Date(review.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}</time>
+              </article>
+            )) : (
+              <div className="flex min-h-48 flex-col items-center justify-center rounded-2xl border border-dashed border-[#8B4513]/20 bg-white p-8 text-center"><MessageSquare className="text-[#8B4513]/40" size={32} /><h3 className="mt-3 font-serif text-xl text-[#3d2b1f]">Be the first to review this piece</h3><p className="mt-2 max-w-sm text-sm text-stone-500">After delivery, open My Orders to share your fit, quality, and styling experience.</p></div>
+            )}
+          </div>
         </div>
-      </div>
+      </section>
 
       <RelatedProducts category={productData.category} subCategory={productData.subCategory} />
     </div>

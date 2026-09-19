@@ -9,6 +9,7 @@ import cartRouter from './routes/cartRoute.js';
 import orderRouter from './routes/orderRoute.js';
 import wishlistRoute from './routes/wishlistRoute.js'
 import maxDiscountRouter from './routes/maxDiscountRoute.js';
+import reviewRouter from './routes/reviewRoute.js';
 //app config
 const app=express()
 const port=process.env.PORT || 4000
@@ -22,6 +23,7 @@ app.use('/api/cart', cartRouter)
 app.use('/api/order', orderRouter)
 app.use("/api/wishlist", wishlistRoute)
 app.use('/api/maxDiscount', maxDiscountRouter);
+app.use('/api/review', reviewRouter);
 app.get('/', (req,res)=>{
     res.send("Drip API working")
 })
